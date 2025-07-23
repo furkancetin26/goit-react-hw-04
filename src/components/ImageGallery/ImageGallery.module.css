@@ -1,0 +1,24 @@
+.gallery {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* ImageCard.module.css */
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* orantıyı koru, taşanı kırp */
+  display: block;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card img:hover {
+  transform: scale(1.03);
+}
