@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchBar from './components/SearchBar/SearchBar';
 import { fetchImages } from './services/api';
 import ImageGallery from './components/ImageGallery/ImageGallery';
@@ -15,22 +15,35 @@ function App() {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
 
-const handleSearch = async (query) => {
-  try {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setError(null);          
-    setIsLoading(true);
-    setQuery(query);  
-    setPage(1);               
-    const data = await fetchImages(query);
-    setImages(data.results);
-  } catch (error) {
-    console.error(error.message);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  // ✅ Sadece burası fetch işlemini yapacak
+  useEffect(() => {
+    if (!query) return;
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const result = await fetchImages(query, page);
+        // Sayfa 1 ise yeni arama, değilse ekleme
+        setImages(prev =>
+          page === 1 ? result.results : [...prev, ...result.results]
+        );
+        setError(null);
+      } catch (error) {
+        setError('Veri alınırken hata oluştu.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [query, page]);
+
+  const handleSearch = (newQuery) => {
+    if (newQuery === query) return; // Aynı arama tekrar yapılmasın
+    setQuery(newQuery);
+    setPage(1);          // Sayfayı sıfırla
+    setImages([]);       // Eski sonuçları temizle
+  };
 
   const openModal = (image) => {
     setModalData(image);
@@ -40,19 +53,9 @@ const handleSearch = async (query) => {
     setModalData(null);
   };
 
-  const handleLoadMore = async () => {
-  try {
-    setIsLoading(true);
-    const nextPage = page + 1;
-    const data = await fetchImages(query, nextPage);
-    setImages(prev => [...prev, ...data.results]); // eski resimlere ekle
-    setPage(nextPage);
-  } catch (error) {
-    setError(error.message);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  const handleLoadMore = () => {
+    setPage(prev => prev + 1); // Sadece sayfayı artır, useEffect çalışır
+  };
 
   return (
     <>

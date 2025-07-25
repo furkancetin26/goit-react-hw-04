@@ -24,9 +24,9 @@ export default function SearchBar({ onSubmit }) {
   };
 
   return (
-    <header>
+    <header className={styles.header}>
       <Toaster position="top-right" />
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <input
           className={styles.input}
           type="text"
@@ -36,7 +36,9 @@ export default function SearchBar({ onSubmit }) {
           autoFocus
           placeholder="Search images and photos"
         />
-        <button type="submit">Search</button>
+        <button className={styles.button} type="submit">
+          Search
+        </button>
       </form>
     </header>
   );
